@@ -17,7 +17,7 @@ namespace Server
                 ) ,
                 new IdentityResource
                 (
-                    "claims", 
+                    "claims",
                     "Your claims",
                     new List<string> {"user-id"}
                 )
@@ -48,7 +48,6 @@ namespace Server
                     ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
                     AllowedScopes = { "EComAPI.read", "EComAPI.write" }
                 },
-
                 new Client()
                 {
                     ClientId = "roles_client",
@@ -59,8 +58,25 @@ namespace Server
                     AllowedScopes = { "openid", "profile", "EComAPI.read", "roles", "claims" },
                     RequireClientSecret = false,
                     AlwaysIncludeUserClaimsInIdToken = true
-                }
+                },
+                // interactive client using code flow + pkce
+                new Client
+                {
+                    ClientId = "interactive",
+                    ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
+                    AllowedGrantTypes = GrantTypes.Code,
+                    RedirectUris = { "https://localhost:4200/signin-oidc" },
+                    FrontChannelLogoutUri = "https://localhost:4200/signout-oidc",
+                    PostLogoutRedirectUris = { "https://localhost:4200/signout-callback-oidc" },
+                    AllowOfflineAccess = true,
+                    AllowedScopes = { "openid", "profile", "EComAPI.read" },
+                    RequirePkce = true,
+                    RequireConsent = true,
+                    AllowPlainTextPkce = false,
+                    RequireClientSecret = false,
+                    AllowedCorsOrigins={ "https://localhost:4200"}
 
+                },
             };
     }
 }
