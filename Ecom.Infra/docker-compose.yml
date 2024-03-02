@@ -36,7 +36,7 @@ services:
       - my_network
 
   ecomproductservice:
-      image: productone:latest
+      image: productone1:latest
       container_name: ecomproductservice
       hostname: productservice
       build:
@@ -104,7 +104,7 @@ services:
         - "5016:443"
 
   ecomapigateway:
-      image: apigateway:latest
+      image: apigateway1:latest
       container_name: gateway
       hostname: ecom.apigateway
       build:
@@ -137,12 +137,12 @@ services:
       - my_network
 
   identityserver:
-    image: identityserver:latest
+    image: identityserver4:latest
     container_name: identityserver
     hostname: identityserver
     environment:
       - DB_HOST="mssql,1433"
-      - DB_NAME=serverdb
+      - DB_NAME=MicroBackendDb
       - DB_SA_PASSWORD=Pass123$
     build:
       context: .
