@@ -21,3 +21,4 @@ Ecom.ProductService/Ecom.ProductService.Contracts/obj
 **/obj/
 **/NuGet.Config
 **/*.dll
+Ecom.Infra/.env
