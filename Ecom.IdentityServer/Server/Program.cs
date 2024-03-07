@@ -22,7 +22,7 @@ var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
 
 // var dbHost = "127.0.0.1,1433";
-// var dbName = "MicroBackendDb";
+// var dbName = "MicroBackendDb2";
 // var dbPassword = "Pass123$";
 
 var defaultConnString = $"Data Source={dbHost};Initial Catalog={dbName};User ID=sa;Password={dbPassword}";

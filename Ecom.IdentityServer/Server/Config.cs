@@ -63,7 +63,7 @@ namespace Server
                     RequireConsent = true,
                     AllowPlainTextPkce = false,
                     RequireClientSecret = false,
-                    AllowedCorsOrigins={ "https://localhost:4200"}
+                    AllowedCorsOrigins={ "https://localhost:4200", "http://localhost:8001"}
                 }
 
             };
