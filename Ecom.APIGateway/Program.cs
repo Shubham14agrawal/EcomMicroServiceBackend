@@ -54,7 +54,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://identityserver:80");
+        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
     });
 });
 
@@ -81,9 +81,8 @@ app.UseSwaggerForOcelotUI(options =>
 }).UseOcelot().Wait();
 
 app.UseCors("CorsPolicy");
-
 app.UseAuthentication();
-
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

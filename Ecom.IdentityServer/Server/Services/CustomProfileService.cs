@@ -20,9 +20,9 @@ namespace Server.Services
             var allClaims = await _userManager.GetClaimsAsync(user);
             allClaims.Add(new Claim("user-id", user.Id));
 
-            var requiredClaims = allClaims.Where(claim => claim.Type == "user-id" || claim.Type == "role").ToList();
+            //var requiredClaims = allClaims.Where(claim => claim.Type == "user-id" || claim.Type == "role").ToList();
 
-            context.IssuedClaims.AddRange(requiredClaims);
+            context.IssuedClaims.AddRange(allClaims);
 
         }
 

@@ -50,33 +50,20 @@ namespace Server
                 },
                 new Client()
                 {
-                    ClientId = "roles_client",
-                    ClientName = "Roles Test Client",
-                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    ClientSecrets = { new Secret("secret".Sha256()) },
-                    AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "EComAPI.read", "roles", "claims" },
-                    RequireClientSecret = false,
-                    AlwaysIncludeUserClaimsInIdToken = true
-                },
-                // interactive client using code flow + pkce
-                new Client
-                {
                     ClientId = "interactive",
-                    ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
                     RedirectUris = { "https://localhost:4200/signin-oidc" },
                     FrontChannelLogoutUri = "https://localhost:4200/signout-oidc",
                     PostLogoutRedirectUris = { "https://localhost:4200/signout-callback-oidc" },
                     AllowOfflineAccess = true,
-                    AllowedScopes = { "openid", "profile", "EComAPI.read" },
+                    AllowedScopes = { "openid", "profile", "EComAPI.read", "roles", "claims", "offline_access" },
                     RequirePkce = true,
                     RequireConsent = true,
                     AllowPlainTextPkce = false,
                     RequireClientSecret = false,
-                    AllowedCorsOrigins={ "https://localhost:4200"}
-
-                },
+                    AllowedCorsOrigins={ "https://localhost:4200", "http://localhost:8001"}
+                }
             };
     }
 }

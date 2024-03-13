@@ -36,95 +36,106 @@ services:
       - my_network
 
   ecomproductservice:
-      image: productone:latest
-      container_name: ecomproductservice
-      hostname: productservice
-      build:
-        context: .
-        dockerfile: Dockerfile
-      networks:
-        - my_network
-      depends_on:
-        - rabbitmq
-        - mongo
-        - eurekaserver
-      ports:
-        - "5000:80"
-        - "5001:443"
+    image: productone1:latest
+    container_name: ecomproductservice
+    hostname: productservice
+    build:
+      context: ../Ecom.ProductService
+      dockerfile: Dockerfile
+      args:
+        GH_PAT: ${GH_PAT}
+        GH_OWNER: ${GH_OWNER}
+    networks:
+      - my_network
+    depends_on:
+      - rabbitmq
+      - mongo
+      - eurekaserver
+    ports:
+      - "5000:80"
+      - "5001:443"
 
   ecomcartservice:
-      image: cartservice:latest
-      container_name: ecomcartservice
-      hostname: cartservice
-      build:
-        context: .
-        dockerfile: Dockerfile
-      networks:
-        - my_network
-      depends_on:
-        - rabbitmq
-        - mongo
-        - eurekaserver
-      ports:
-        - "5005:80"
-        - "5006:443"
+    image: cartservice:latest
+    container_name: ecomcartservice
+    hostname: cartservice
+    build:
+      context: ../Ecom.CartService
+      dockerfile: Dockerfile
+      args:
+        GH_PAT: ${GH_PAT}
+        GH_OWNER: ${GH_OWNER}
+    networks:
+      - my_network
+    depends_on:
+      - rabbitmq
+      - mongo
+      - eurekaserver
+    ports:
+      - "5005:80"
+      - "5006:443"
 
   ecomorderservice:
-      image: orderservice:latest
-      container_name: ecomorderservice
-      hostname: orderservice
-      build:
-        context: .
-        dockerfile: Dockerfile
-      networks:
-        - my_network
-      depends_on:
-        - rabbitmq
-        - mongo
-        - eurekaserver
-      ports:
-        - "5010:80"
-        - "5011:443"
+    image: orderservice:latest
+    container_name: ecomorderservice
+    hostname: orderservice
+    build:
+      context: ../Ecom.OrderService
+      dockerfile: Dockerfile
+      args:
+        GH_PAT: ${GH_PAT}
+        GH_OWNER: ${GH_OWNER}
+    networks:
+      - my_network
+    depends_on:
+      - rabbitmq
+      - mongo
+      - eurekaserver
+    ports:
+      - "5010:80"
+      - "5011:443"
 
   ecominventoryservice:
-      image: inventory:latest
-      container_name: ecominventoryservice
-      hostname: inventoryservice
-      build:
-        context: .
-        dockerfile: Dockerfile
-      networks:
-        - my_network
-      depends_on:
-        - rabbitmq
-        - mongo
-        - eurekaserver
-      ports:
-        - "5015:80"
-        - "5016:443"
+    image: inventory:latest
+    container_name: ecominventoryservice
+    hostname: inventoryservice
+    build:
+      context: ../Ecom.Inventory
+      dockerfile: Dockerfile
+      args:
+        GH_PAT: ${GH_PAT}
+        GH_OWNER: ${GH_OWNER}
+    networks:
+      - my_network
+    depends_on:
+      - rabbitmq
+      - mongo
+      - eurekaserver
+    ports:
+      - "5015:80"
+      - "5016:443"
 
   ecomapigateway:
-      image: apigateway:latest
-      container_name: gateway
-      hostname: ecom.apigateway
-      build:
-        context: .
-        dockerfile: Dockerfile
-      networks:
-        - my_network
-      depends_on:
-        - eurekaserver
-        - ecomcartservice
-        - ecominventoryservice
-        - ecomorderservice
-        - ecomproductservice
-      ports:
-        - "8001:80"
-        - "8002:443"
+    image: apigateway1:latest
+    container_name: gateway
+    hostname: ecom.apigateway
+    build:
+      context: ../Ecom.APIGateway
+      dockerfile: Dockerfile
+    networks:
+      - my_network
+    depends_on:
+      - eurekaserver
+      - ecomcartservice
+      - ecominventoryservice
+      - ecomorderservice
+      - ecomproductservice
+    ports:
+      - "8001:80"
+      - "8002:443"
 
   mssql:
     image: mcr.microsoft.com/mssql/server
-    container_name: mssql
     hostname: mssql
     environment:
       SA_PASSWORD: "Pass123$"
@@ -137,15 +148,15 @@ services:
       - my_network
 
   identityserver:
-    image: identityserver:latest
+    image: identityserver4:latest
     container_name: identityserver
     hostname: identityserver
     environment:
       - DB_HOST="mssql,1433"
-      - DB_NAME=serverdb
+      - DB_NAME=MicroBackendDb2
       - DB_SA_PASSWORD=Pass123$
     build:
-      context: .
+      context: ../Ecom.IdentityServer/Server
       dockerfile: Dockerfile
     ports:
       - 5443:443
