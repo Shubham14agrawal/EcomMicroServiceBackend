@@ -17,7 +17,7 @@ namespace Server
                 ) ,
                 new IdentityResource
                 (
-                    "claims", 
+                    "claims",
                     "Your claims",
                     new List<string> {"user-id"}
                 )
@@ -48,7 +48,6 @@ namespace Server
                     ClientSecrets = { new Secret("ClientSecret1".Sha256()) },
                     AllowedScopes = { "EComAPI.read", "EComAPI.write" }
                 },
-
                 new Client()
                 {
                     ClientId = "interactive",
@@ -65,7 +64,6 @@ namespace Server
                     RequireClientSecret = false,
                     AllowedCorsOrigins={ "https://localhost:4200", "http://localhost:8001"}
                 }
-
             };
     }
 }

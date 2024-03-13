@@ -16,7 +16,7 @@ if (seed)
 var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly.GetName().Name;
-//var defaultConnString = builder.Configuration.GetConnectionString("DefaultConnection");
+var defaultConnString = builder.Configuration.GetConnectionString("DefaultConnection");
 var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
 var dbName = Environment.GetEnvironmentVariable("DB_NAME");
 var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
@@ -25,7 +25,7 @@ var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
 // var dbName = "MicroBackendDb2";
 // var dbPassword = "Pass123$";
 
-var defaultConnString = $"Data Source={dbHost};Initial Catalog={dbName};User ID=sa;Password={dbPassword}";
+//var defaultConnString = $"Data Source={dbHost};Initial Catalog={dbName};User ID=sa;Password={dbPassword}";
 
 if (seed)
 {
