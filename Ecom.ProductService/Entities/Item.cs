@@ -14,5 +14,7 @@ namespace Ecom.ProductService.Entities
         public string Subcategory { get; set; }
         public string Type { get; set; }
 
+        public string ImageUrl{get; set;}
+
     }
 }
