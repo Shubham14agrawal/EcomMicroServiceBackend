@@ -46,6 +46,7 @@ namespace Ecom.ProductService.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<ItemDto>> PostAsync(CreateItemDto createItemDto)
         {
+            string imageUrl = createItemDto.ImageUrl;
             var item = new Item
             {
                 Name = createItemDto.Name,
@@ -54,7 +55,8 @@ namespace Ecom.ProductService.Controllers
                 CreatedDate = DateTimeOffset.UtcNow,
                 Category = createItemDto.Category,
                 Subcategory = createItemDto.Subcategory,
-                Type = createItemDto.Type, 
+                Type = createItemDto.Type,
+                ImageUrl = imageUrl 
             };
             await itemsRepository.CreateAsync(item);
 
@@ -78,6 +80,7 @@ namespace Ecom.ProductService.Controllers
             existingItem.Category = updateItemDto.Category;
             existingItem.Subcategory = updateItemDto.Subcategory;
             existingItem.Type = updateItemDto.Type;
+            existingItem.ImageUrl = updateItemDto.ImageUrl;
 
             await itemsRepository.UpdateAsync(existingItem);
 
