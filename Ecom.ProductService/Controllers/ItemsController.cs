@@ -1,6 +1,7 @@
 ﻿using Ecom.Common;
 using Ecom.ProductService.Entities;
 using MassTransit;
+using MassTransit.Initializers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -15,19 +16,31 @@ namespace Ecom.ProductService.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IRepository<Item> itemsRepository;
+        private readonly IRepository<Category> categoriesRepository;
         private readonly IPublishEndpoint publishEndpoint;
-        public ItemsController(IRepository<Item> itemsRepository, IPublishEndpoint publishEndpoint)
+        public ItemsController(IRepository<Item> itemsRepository, IRepository<Category> categoriesRepository, IPublishEndpoint publishEndpoint)
         {
             this.itemsRepository = itemsRepository;
-            this.publishEndpoint = publishEndpoint; 
+            this.publishEndpoint = publishEndpoint;
+            this.categoriesRepository = categoriesRepository;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> GetAsync()
+        public async Task<IEnumerable<ItemDto>> GetAsync([FromQuery(Name ="category")] string category="all")
         {
-            var items = (await itemsRepository.GetAllAsync())
+            if (category != "all")
+            {
+                var items = (await itemsRepository.GetAllAsync(item => item.Category == category))
                         .Select(item => item.AsDto());
-            return items;
+                return items;
+
+            }
+            else
+            {
+                var items = (await itemsRepository.GetAllAsync())
+                        .Select(item => item.AsDto());
+                return items;
+            }
         }
 
         [HttpGet( "{id}" )]
@@ -58,6 +71,17 @@ namespace Ecom.ProductService.Controllers
                 Type = createItemDto.Type,
                 ImageUrl = imageUrl 
             };
+            {
+                // check if category exist
+                var categoryExist = await categoriesRepository.GetAsync(category => category.CategoryName == item.Category);
+                if (categoryExist == null)
+                {
+                    return BadRequest(new
+                    {
+                        error = "Invalid Category"
+                    });
+                }
+            }
             await itemsRepository.CreateAsync(item);
 
             await publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name,item.Description,item.Price));
@@ -104,5 +128,25 @@ namespace Ecom.ProductService.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("/categories")]
+        public async Task<ActionResult<Category[]>> GetCategories()
+        {
+            return Ok(await categoriesRepository.GetAllAsync());
+        }
+
+        [HttpPost("/categories")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> AddCategory(CreateCategoryDto category)
+        {
+            var newCategory = new Category
+            {
+                CategoryImageUrl = category.categoryImageUrl,
+                CategoryName = category.categoryName
+            };
+            await categoriesRepository.CreateAsync(newCategory);
+            return CreatedAtAction(nameof(AddCategory), new { id = newCategory.Id }, newCategory);
+        }
+
     }
 }
