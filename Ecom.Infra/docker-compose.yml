@@ -39,6 +39,8 @@ services:
     image: productone1:latest
     container_name: ecomproductservice
     hostname: productservice
+    environment:
+      - ASPNETCORE_ENVIRONMENT=DEVELOPMENT
     build:
       context: ../Ecom.ProductService
       dockerfile: Dockerfile

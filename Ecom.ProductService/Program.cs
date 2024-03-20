@@ -14,6 +14,7 @@ var serviceSettings = builder.Configuration.GetSection("ServiceSettings").Get<Se
 
 builder.Services.AddMongo()
                 .AddMongoRepository<Item>("items")
+                .AddMongoRepository<Category>("categories")
 .AddMassTransitWithRabbitMq();
 
 builder.Services.AddServiceDiscovery(o => o.UseEureka());
