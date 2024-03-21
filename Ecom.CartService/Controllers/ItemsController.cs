@@ -21,15 +21,12 @@ namespace Ecom.CartService.Controllers
         private readonly IRepository<CartItem> cartItemsRepository;
         private readonly IRepository<CatalogItem> catalogItemsRepository;
 
-        private readonly IRepository<InventoryItem> inventoryRepository;
-
         private readonly IPublishEndpoint publishEndpoint;
-        public ItemsController(IRepository<CartItem> cartItemsRepository, IRepository<CatalogItem> catalogItemsRepository, IPublishEndpoint publishEndpoint, IRepository<InventoryItem> inventoryRepository)
+        public ItemsController(IRepository<CartItem> cartItemsRepository, IRepository<CatalogItem> catalogItemsRepository, IPublishEndpoint publishEndpoint)
         {
             this.cartItemsRepository = cartItemsRepository;
             this.catalogItemsRepository = catalogItemsRepository;
             this.publishEndpoint = publishEndpoint;
-            this.inventoryRepository = inventoryRepository;
         }
 
         private Guid GetUserIdFromClaims()
@@ -73,13 +70,13 @@ namespace Ecom.CartService.Controllers
         {
             var userId = GetUserIdFromClaims();
 
-            var inventoryItem = await inventoryRepository.GetAsync(inventoryItem => inventoryItem.ProductId == grantItemsDto.CatalogItemId);
-            if (inventoryItem.Quantity < grantItemsDto.Quantity)
+            var catalogItem = await catalogItemsRepository.GetAsync(catalogItem => catalogItem.Id == grantItemsDto.CatalogItemId);
+            if (catalogItem.Inventory < grantItemsDto.Quantity)
             {
                 return BadRequest(new
                 {
                     message = "Not enough stocks",
-                    availableQuantity = inventoryItem.Quantity
+                    availableQuantity = catalogItem.Inventory
                 });
             }
             var cartItem = await cartItemsRepository.GetAsync(item => item.UserId == userId && item.CatalogItemId == grantItemsDto.CatalogItemId);
@@ -166,8 +163,8 @@ namespace Ecom.CartService.Controllers
 
             foreach (var cartItem in cartItems)
             {
-                var previousInventoryItem = await inventoryRepository.GetAsync(item => item.ProductId == cartItem.CatalogItemId);
-                if (previousInventoryItem.Quantity < cartItem.Quantity)
+                var previousInventoryItem = await catalogItemsRepository.GetAsync(item => item.Id == cartItem.CatalogItemId);
+                if (previousInventoryItem.Inventory < cartItem.Quantity)
                 {
                     return BadRequest(new
                     {
@@ -178,12 +175,13 @@ namespace Ecom.CartService.Controllers
 
             foreach (var cartItem in cartItems)
             {
-                var previousInventoryItem = await inventoryRepository.GetAsync(item => item.ProductId == cartItem.CatalogItemId);
-                await inventoryRepository.UpdateAsync(new InventoryItem
+                var previousInventoryItem = await catalogItemsRepository.GetAsync(item => item.Id == cartItem.CatalogItemId);
+                await catalogItemsRepository.UpdateAsync(new CatalogItem
                 {
                     Id = previousInventoryItem.Id,
-                    ProductId = previousInventoryItem.ProductId,
-                    Quantity = previousInventoryItem.Quantity - cartItem.Quantity
+                    Name = previousInventoryItem.Name,
+                    Description = previousInventoryItem.Description,
+                    Inventory = previousInventoryItem.Inventory - cartItem.Quantity
                 });
                 await cartItemsRepository.RemoveAsync(cartItem.Id);
             }

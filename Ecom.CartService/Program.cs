@@ -20,7 +20,6 @@ builder.Services.AddServiceDiscovery(o => o.UseEureka());
 builder.Services.AddMongo()
                 .AddMongoRepository<CartItem>("cartitems")
                 .AddMongoRepository<CatalogItem>("catalogitems")
-                .AddMongoRepository<InventoryItem>("inventoryItems")
                 .AddMassTransitWithRabbitMq();
 
 AddCatalogClient(builder);

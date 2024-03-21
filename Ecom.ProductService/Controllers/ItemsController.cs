@@ -69,7 +69,8 @@ namespace Ecom.ProductService.Controllers
                 Category = createItemDto.Category,
                 Subcategory = createItemDto.Subcategory,
                 Type = createItemDto.Type,
-                ImageUrl = imageUrl 
+                ImageUrl = imageUrl,
+                Inventory = createItemDto.Inventory
             };
             {
                 // check if category exist
@@ -84,7 +85,7 @@ namespace Ecom.ProductService.Controllers
             }
             await itemsRepository.CreateAsync(item);
 
-            await publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name,item.Description,item.Price));
+            await publishEndpoint.Publish(new CatalogItemCreated(item.Id, item.Name,item.Description,item.Price, item.Inventory));
 
             return CreatedAtAction(nameof(GetByIdAsync), new {id = item.Id}, item);  
         }
@@ -105,10 +106,11 @@ namespace Ecom.ProductService.Controllers
             existingItem.Subcategory = updateItemDto.Subcategory;
             existingItem.Type = updateItemDto.Type;
             existingItem.ImageUrl = updateItemDto.ImageUrl;
+            existingItem.Inventory = updateItemDto.Inventory;
 
             await itemsRepository.UpdateAsync(existingItem);
 
-            await publishEndpoint.Publish(new CatalogItemUpdated(existingItem.Id, existingItem.Name, existingItem.Description, existingItem.Price));
+            await publishEndpoint.Publish(new CatalogItemUpdated(existingItem.Id, existingItem.Name, existingItem.Description, existingItem.Price, existingItem.Inventory));
 
             return NoContent();
         }
