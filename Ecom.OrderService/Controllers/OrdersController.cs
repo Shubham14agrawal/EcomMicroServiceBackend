@@ -56,32 +56,29 @@ namespace Ecom.OrderService.Controllers
         private async Task<List<OrderDetailDto>> GetOrdersOfUser(Guid userId)
         {
             var orders = (await orderRepository.GetAllAsync(order => order.UserId == userId)).ToList();
-            if(orders == null)
+            if (orders == null)
             {
                 throw new KeyNotFoundException();
             }
-            SortedSet<Guid> uniqueProductIds = new SortedSet<Guid>();
-            Dictionary<Guid, OrderItemDto> items = new Dictionary<Guid, OrderItemDto>();
+
             List<OrderDetailDto> resultList = new List<OrderDetailDto>();
-            foreach(var order in orders)
+            foreach (var order in orders)
             {
                 var orderItems = order.OrderItems;
-                foreach(var orderItem in orderItems)
+                foreach (var orderItem in orderItems)
                 {
-                    if (uniqueProductIds.Contains(orderItem.CatalogItemId))
+                    var catalogItem = await catalogItemRepository.GetAsync(orderItem.CatalogItemId);
+                    if (catalogItem != null)
                     {
-                        OrderItemDto orderItemDto = items[orderItem.CatalogItemId];
-                        OrderDetailDto orderDetails = new OrderDetailDto(order.Id, order.UserId, orderItem.CatalogItemId, orderItemDto.Name, orderItemDto.Price, orderItemDto.Quantity, order.OrderDate);
-                        resultList.Add(orderDetails);
-                    }
-                    
-                    else
-                    {
-                        CatalogItemDto catalogItem = (await catalogItemRepository.GetAsync(orderItem.CatalogItemId)).AsDto();
-                        OrderItemDto orderItemDto = new OrderItemDto(order.Id, catalogItem.Id, catalogItem.Name, catalogItem.Price, orderItem.Quantity);
-                        items.Add(orderItem.CatalogItemId, orderItemDto);
-                        uniqueProductIds.Add(orderItem.CatalogItemId);
-                        OrderDetailDto orderDetails = new OrderDetailDto(order.Id, order.UserId, orderItem.CatalogItemId, orderItemDto.Name, orderItemDto.Price, orderItemDto.Quantity, order.OrderDate);
+                        OrderDetailDto orderDetails = new OrderDetailDto(
+                            order.Id,
+                            order.UserId,
+                            orderItem.CatalogItemId,
+                            catalogItem.Name,
+                            orderItem.Price,
+                            orderItem.Quantity,
+                            order.OrderDate
+                        );
                         resultList.Add(orderDetails);
                     }
                 }
@@ -89,5 +86,7 @@ namespace Ecom.OrderService.Controllers
 
             return resultList;
         }
+
+
     }
 }
