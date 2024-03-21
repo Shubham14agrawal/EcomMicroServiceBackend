@@ -25,7 +25,8 @@ namespace Ecom.CartService.Consumers
                     Id = message.ItemId,
                     Name = message.Name,
                     Description = message.Description,
-                    Price = message.Price
+                    Price = message.Price,
+                    Inventory = message.Inventory
                 };
                 await repository.CreateAsync(item);
             }
@@ -34,6 +35,7 @@ namespace Ecom.CartService.Consumers
                 item.Name = message.Name;
                 item.Description = message.Description;
                 item.Price = message.Price;
+                item.Inventory = message.Inventory;
 
                 await repository.UpdateAsync(item);
             }

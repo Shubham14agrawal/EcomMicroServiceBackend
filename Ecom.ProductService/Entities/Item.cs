@@ -15,6 +15,7 @@ namespace Ecom.ProductService.Entities
         public string Type { get; set; }
 
         public string ImageUrl{get; set;}
+        public int Inventory { get; set; }
 
     }
 }
